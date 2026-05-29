@@ -21,7 +21,7 @@ export async function GET(req: Request) {
     const account = await twilioClient.api.v2010.accounts(process.env.TWILIO_ACCOUNT_SID!).fetch();
     return NextResponse.json({
       balance: account.balance,
-      currency: account.currency,
+      currency: 'USD', // Default to USD for Twilio accounts
     });
   } catch (error) {
     console.error('Balance fetch error:', error);
