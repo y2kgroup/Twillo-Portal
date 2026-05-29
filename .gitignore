@@ -1,0 +1,33 @@
+# Dependencies
+node_modules
+package-lock.json
+
+# Environment variables
+.env
+
+# Next.js
+.next
+out
+
+# Vercel
+.vercel
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+logs
+*.log
+
+# Temporary files
+tmp
+temp
+Promt

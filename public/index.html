@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Twillo Y2K Portal</title>
+  <meta name="description" content="Personal Twilio account management portal">
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <div id="app">
+    <!-- Loading state -->
+    <div id="loading" class="loading-screen">
+      <div class="spinner"></div>
+      <p>Loading...</p>
+    </div>
+
+    <!-- Auth screen -->
+    <div id="auth-screen" class="auth-screen hidden">
+      <div class="auth-container">
+        <h1>Twillo Y2K Portal</h1>
+        <p>Sign in with Google to access your account</p>
+        <div id="dev-warning" class="dev-warning hidden">
+          <p><strong>Development Mode:</strong> Supabase credentials not configured in .env</p>
+          <p>Update .env with real credentials to enable authentication</p>
+        </div>
+        <button id="google-signin" class="btn btn-primary">Sign in with Google</button>
+      </div>
+    </div>
+
+    <!-- Main app -->
+    <div id="main-app" class="main-app hidden">
+      <!-- Top bar -->
+      <header class="top-bar">
+        <button id="menu-toggle" class="menu-toggle hidden">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        </button>
+        <h1>Twillo Y2K Portal</h1>
+        <div class="balance-display">
+          <span class="balance-label">Balance:</span>
+          <span id="balance-amount" class="balance-amount">--</span>
+          <button id="refresh-balance" class="btn-icon" title="Refresh balance">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M23 4v6h-6"></path>
+              <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+            </svg>
+          </button>
+        </div>
+        <button id="settings-btn" class="btn-icon" title="Settings (Ctrl+,)">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M12 1v6m0 6v6"></path>
+            <path d="m4.93 4.93 4.24 4.24m5.66 5.66 4.24 4.24"></path>
+            <path d="M1 12h6m6 0h6"></path>
+            <path d="m4.93 19.07 4.24-4.24m5.66-5.66 4.24-4.24"></path>
+          </svg>
+          <span class="btn-label">Settings</span>
+        </button>
+        <button id="signout-btn" class="btn-icon" title="Sign out">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+            <polyline points="16 17 21 12 16 7"></polyline>
+            <line x1="21" y1="12" x2="9" y2="12"></line>
+          </svg>
+        </button>
+      </header>
+
+      <div class="app-body">
+        <!-- Sidebar: Numbers list -->
+        <aside id="sidebar" class="sidebar">
+          <div class="sidebar-header">
+            <h2>My Numbers</h2>
+            <button id="buy-number-btn" class="btn btn-primary btn-sm">+ Buy Number</button>
+          </div>
+          <ul id="numbers-list" class="numbers-list">
+            <!-- Numbers will be populated here -->
+          </ul>
+        </aside>
+
+        <!-- Main pane: Selected number tabs -->
+        <main id="main-pane" class="main-pane">
+          <div id="no-number-selected" class="no-number-selected">
+            <p>Select a number from the sidebar to view its details</p>
+          </div>
+
+          <div id="number-detail" class="number-detail hidden">
+            <div class="number-header">
+              <h2 id="selected-number-display">+1 (555) 123-4567</h2>
+              <div id="selected-number-capabilities" class="capability-badges">
+                <!-- Badges: Voice, SMS, MMS -->
+              </div>
+            </div>
+
+            <div class="tabs">
+              <button class="tab-btn active" data-tab="messages">Messages</button>
+              <button class="tab-btn" data-tab="call">Call</button>
+              <button class="tab-btn" data-tab="history">History</button>
+            </div>
+
+            <!-- Messages tab -->
+            <div id="tab-messages" class="tab-content active">
+              <div id="sms-thread" class="sms-thread">
+                <!-- Messages will be populated here -->
+              </div>
+              <div class="sms-composer">
+                <form id="sms-form">
+                  <input type="tel" id="sms-to" placeholder="To (phone number)" required>
+                  <textarea id="sms-body" placeholder="Type a message..." rows="2" required></textarea>
+                  <button type="submit" class="btn btn-primary">Send</button>
+                </form>
+              </div>
+            </div>
+
+            <!-- Call tab -->
+            <div id="tab-call" class="tab-content">
+              <div class="call-controls">
+                <form id="call-form">
+                  <input type="tel" id="call-to" placeholder="Call (phone number)" required>
+                  <div class="call-mode-selector">
+                    <label class="radio-option">
+                      <input type="radio" name="call-mode" value="browser" checked>
+                      <span>Browser (WebRTC)</span>
+                    </label>
+                    <label class="radio-option">
+                      <input type="radio" name="call-mode" value="forward">
+                      <span>Forward to my cell</span>
+                    </label>
+                  </div>
+                  <button type="submit" class="btn btn-primary btn-lg">Dial</button>
+                </form>
+                <div id="active-call" class="active-call hidden">
+                  <p class="call-status">Connecting...</p>
+                  <button id="hangup-btn" class="btn btn-danger">Hang Up</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- History tab -->
+            <div id="tab-history" class="tab-content">
+              <div id="history-list" class="history-list">
+                <!-- Call history will be populated here -->
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <!-- Modals -->
+    <div id="modal-overlay" class="modal-overlay hidden"></div>
+
+    <!-- Buy Number Modal -->
+    <div id="buy-modal" class="modal hidden">
+      <div class="modal-header">
+        <h3>Buy a Number</h3>
+        <button class="modal-close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="buy-form">
+          <div class="form-group">
+            <label for="buy-country">Country</label>
+            <select id="buy-country" required>
+              <option value="US">United States</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="buy-type">Type</label>
+            <select id="buy-type" required>
+              <option value="local">Local</option>
+              <option value="toll-free">Toll-Free</option>
+              <option value="mobile">Mobile</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="buy-area-code">Area Code (optional)</label>
+            <input type="text" id="buy-area-code" placeholder="e.g. 415">
+          </div>
+          <div class="form-group">
+            <label for="buy-contains">Contains pattern (optional)</label>
+            <input type="text" id="buy-contains" placeholder="e.g. 555">
+          </div>
+          <button type="submit" class="btn btn-primary">Search</button>
+        </form>
+        <div id="buy-results" class="buy-results">
+          <!-- Search results will appear here -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="modal hidden">
+      <div class="modal-header">
+        <h3>Settings</h3>
+        <button class="modal-close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="settings-form">
+          <div class="form-group">
+            <label for="settings-theme">🌙 Theme Mode</label>
+            <select id="settings-theme">
+              <option value="dark">Dark Mode</option>
+              <option value="light">Light Mode</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="settings-forward-to">Forward to my cell (E.164 format)</label>
+            <input type="tel" id="settings-forward-to" placeholder="+15551234567" required>
+            <small>Used for inbound call forwarding and click-to-dial</small>
+          </div>
+          <div class="form-group">
+            <label for="settings-call-mode">Preferred call mode</label>
+            <select id="settings-call-mode" required>
+              <option value="browser">Browser (WebRTC)</option>
+              <option value="forward">Forward to my cell</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="settings-default-caller-id">Default caller ID</label>
+            <select id="settings-default-caller-id">
+              <!-- Populated from owned numbers -->
+            </select>
+          </div>
+          <button type="submit" class="btn btn-primary">Save Settings</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Toast notifications -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- TEST: Centered Settings Button -->
+    <div id="test-settings-btn" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 10000; background: #3b82f6; color: white; padding: 20px 40px; border: none; border-radius: 8px; font-size: 18px; cursor: pointer; box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
+      ⚙️ OPEN SETTINGS (TEST)
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://media.twiliocdn.com/sdk/js/voice/v2/twilio.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/voice.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>
