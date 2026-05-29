@@ -223,8 +223,19 @@ export default function Home() {
 
   // Send message
   const sendMessage = async () => {
+    console.log('Send button clicked!')
+    console.log('Selected number:', selectedNumber)
+    console.log('To:', newMessageTo)
+    console.log('Body:', newMessageBody)
+    console.log('Has supabase:', !!supabase)
+
     if (!newMessageTo || !newMessageBody || !supabase) {
       showToast('Please fill in all fields')
+      return
+    }
+
+    if (!selectedNumber) {
+      showToast('Please select a phone number first')
       return
     }
 
@@ -529,8 +540,7 @@ export default function Home() {
                     />
                     <button
                       onClick={sendMessage}
-                      disabled={!newMessageTo || !newMessageBody}
-                      className="bg-primary text-white px-4 py-2 rounded hover:bg-primary/80 transition disabled:opacity-50"
+                      className="bg-primary text-white px-4 py-2 rounded hover:bg-primary/80 transition"
                     >
                       Send
                     </button>
