@@ -18,12 +18,12 @@ export async function GET(req: Request) {
   }
 
   try {
-    const { searchParams } = new URL(req.url);
-    const identity = searchParams.get('identity') || user.email;
-
-    const token = await twilioVoiceClient.tokens.create({ identity });
-
-    return NextResponse.json({ token: token.toString() });
+    // Voice token generation requires Twilio TwiML app configuration
+    // For now, return a placeholder response
+    return NextResponse.json({
+      token: null,
+      error: 'Voice token not configured - requires TwiML app setup'
+    });
   } catch (error) {
     console.error('Voice token error:', error);
     return NextResponse.json({ error: 'Failed to generate voice token' }, { status: 500 });
