@@ -176,9 +176,32 @@ export default function Home() {
   }
 
   // Sign in with Google
-  const signIn = () => {
-    if (!supabase) return
-    supabase.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: window.location.origin } })
+  const signIn = async () => {
+    if (!supabase) {
+      showToast('Authentication not configured')
+      return
+    }
+
+    try {
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}`,
+          queryParams: {
+            access_type: 'offline',
+            prompt: 'consent',
+          }
+        }
+      })
+
+      if (error) {
+        console.error('OAuth error:', error)
+        showToast('Failed to sign in')
+      }
+    } catch (error) {
+      console.error('Sign in error:', error)
+      showToast('Failed to sign in')
+    }
   }
 
   // Sign out
