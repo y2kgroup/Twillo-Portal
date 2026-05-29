@@ -115,9 +115,13 @@ export default function Home() {
   // Load user data
   const loadUserData = async (email: string, client: any) => {
     try {
+      // Get session token
+      const { data: { session } } = await client.auth.getSession()
+      const token = session?.access_token
+
       // Load numbers
       const numbersRes = await fetch('/api/numbers', {
-        headers: { Authorization: `Bearer ${await client.auth.getSession().then(s => s.data.session?.access_token)}` }
+        headers: { Authorization: `Bearer ${token}` }
       })
       if (numbersRes.ok) {
         const numbersData = await numbersRes.json()
@@ -129,7 +133,7 @@ export default function Home() {
 
       // Load balance
       const balanceRes = await fetch('/api/balance', {
-        headers: { Authorization: `Bearer ${await client.auth.getSession().then(s => s.data.session?.access_token)}` }
+        headers: { Authorization: `Bearer ${token}` }
       })
       if (balanceRes.ok) {
         const balanceData = await balanceRes.json()
@@ -138,7 +142,7 @@ export default function Home() {
 
       // Load settings
       const settingsRes = await fetch('/api/settings', {
-        headers: { Authorization: `Bearer ${await client.auth.getSession().then(s => s.data.session?.access_token)}` }
+        headers: { Authorization: `Bearer ${token}` }
       })
       if (settingsRes.ok) {
         const settingsData = await settingsRes.json()
