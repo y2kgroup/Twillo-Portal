@@ -71,12 +71,16 @@ export default function Home() {
             setUser({ id: session.user.id, email: session.user.email || '' })
             await loadUserData(session.user.email || '', client)
           } else {
-            // Check for token from hash
+            // Check for OAuth callback in hash
             const hash = window.location.hash
-            const accessToken = new URLSearchParams(hash.substring(1)).get('access_token')
-            if (accessToken) {
+            const params = new URLSearchParams(hash.substring(1))
+            const accessToken = params.get('access_token')
+            const refreshToken = params.get('refresh_token')
+
+            if (accessToken && refreshToken) {
               const { data: { session: newSession } } = await client.auth.setSession({
                 access_token: accessToken,
+                refresh_token: refreshToken,
               })
               if (newSession?.user) {
                 setUser({ id: newSession.user.id, email: newSession.user.email || '' })
