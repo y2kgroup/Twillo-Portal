@@ -14,5 +14,5 @@ export const twilioClient = isValidTwilioCreds
 
 // Voice client for browser-based calls
 export const twilioVoiceClient = isValidTwilioCreds && apiKeySid && apiKeySecret
-  ? new twilio(apiKeySid, apiKeySecret, { accountSid })
+  ? twilio(apiKeySid, apiKeySecret, { accountSid })
   : null;
