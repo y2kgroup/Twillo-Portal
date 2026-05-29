@@ -249,7 +249,9 @@ export default function Home() {
         setNewMessageBody('')
         loadMessages(supabase)
       } else {
-        showToast('Failed to send message')
+        const errorData = await res.json()
+        console.error('Send message error:', errorData)
+        showToast(`Failed to send message: ${errorData.error || 'Unknown error'}`)
       }
     } catch (error) {
       console.error('Error sending message:', error)
