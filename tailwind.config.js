@@ -5,18 +5,7 @@ module.exports = {
     './components/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
-    extend: {
-      colors: {
-        // Dark theme colors
-        background: 'var(--background)',
-        foreground: 'var(--foreground)',
-        primary: 'var(--primary)',
-        secondary: 'var(--secondary)',
-        accent: 'var(--accent)',
-        muted: 'var(--muted)',
-        border: 'var(--border)',
-      },
-    },
+    extend: {},
   },
   plugins: [],
 }
